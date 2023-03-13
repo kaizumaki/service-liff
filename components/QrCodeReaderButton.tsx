@@ -1,8 +1,6 @@
 import type { Liff } from "@line/liff";
 import React, {useState} from 'react'
-interface ScanCodeResult {
-  value: string | null;
-}
+
 interface Prop {
   liff: Liff;
   callback: (value: string | null) => void;
