@@ -12,3 +12,15 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+
+.card.big {
+  grid-column: span 3;
+}
+
+
