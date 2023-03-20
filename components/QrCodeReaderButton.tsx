@@ -1,5 +1,6 @@
 import type { Liff } from "@line/liff";
 import React, {useState} from 'react'
+import { Button } from "@mui/material"
 
 interface Prop {
   liff: Liff;
@@ -19,9 +20,9 @@ const QrCodeReaderButton = (props: Prop) => {
     }
   }
   return (
-    <button disabled={!active} onClick={onClick}>
+    <Button variant="contained" disabled={!active} onClick={onClick}>
       QRコード読み取り
-    </button>
+    </Button>
   )
 }
 
