@@ -17,24 +17,30 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [idValue, setIdValue] = useState("");
   const [isInvalid, setIsInvalid] = useState(false);
+  const [postFailed, setPostFailed] = useState(false);
   const [done, setDone] = useState(false);
-  const showErrorMessage = () => {
+  const showInvalidIdError = () => {
     setIsInvalid(true);
     setTimeout(() => {setIsInvalid(false)}, 5000)
+  }
+  const showPostFailedError = () => {
+    setPostFailed(true);
+    setTimeout(() => {setPostFailed(false)}, 5000)
   }
   const onGetIdCallback = (value: string | null) => {
     setIdValue(value || "");
     setIsLoading(true);
     if (value) {
+      setIsInvalid(false);
       API.getVoucher(value).then((res) => {
         setPointVoucherData(res);
       }).catch(
         (err) => {
-          showErrorMessage();
+          showInvalidIdError();
         }
       ).finally(() => {setIsLoading(false)});
     } else {
-      showErrorMessage();
+      showInvalidIdError();
       setPointVoucherData(null);
       setIsLoading(false);
     }
@@ -45,7 +51,12 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         setPointVoucherData(null);
         setDone(true);
         onDone();
-      });
+      }).catch(
+        (err) => {
+          setPointVoucherData(null);
+          showPostFailedError();
+        }
+      );
     }
   }
   const onCancel = () => {
@@ -57,8 +68,10 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
 
   return (
     <main className={styles.main}>
+      <div>ID Token: {API.lineIdToken}</div>
       <Collapse in={done}><Alert severity="success">ポイントを受け取りました！</Alert></Collapse> 
       <Collapse in={isInvalid}><Alert severity="error">ID が無効です</Alert></Collapse> 
+      <Collapse in={postFailed}><Alert severity="error">ポイントの受け取りに失敗しました</Alert></Collapse>
       {liff && <QrCodeReaderButton liff={liff} callback={onGetIdCallback} />}
       <TextField label="直接 ID を入力する" value={idValue} onChange={(e) => onGetIdCallback(e.target.value)} />
       {isLoading && <CircularProgress />}
