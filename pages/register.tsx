@@ -21,6 +21,8 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
       } else {
         setError(true);
       }
+    }).catch((e) => {
+      setError(true);
     })
   }
   return (
