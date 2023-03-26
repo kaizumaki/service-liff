@@ -1,5 +1,5 @@
 export interface Voucher {
-  id: number
+  id: string
   event_name: string
   event_description: string
   event_image: string

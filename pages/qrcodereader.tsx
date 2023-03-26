@@ -2,14 +2,18 @@ import { useState } from "react";
 import type { Liff } from "@line/liff";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
+import Head from "next/head";
 import QrCodeReaderButton from "@/components/QrCodeReaderButton";
 import PointVoucherDisplay from "@/components/PointVoucherDisplay";
 import API from "@/src/api";
 import { Voucher } from "@/types/Voucher";
 import { TextField, CircularProgress, Alert, Collapse } from "@mui/material"
+import { useContext } from "react";
+import { UserInfoContext } from "@/src/userInfoContext";
 
 
-const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
+
+const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
   liff,
   liffError
 }) => {
@@ -19,6 +23,7 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
   const [isInvalid, setIsInvalid] = useState(false);
   const [postFailed, setPostFailed] = useState(false);
   const [done, setDone] = useState(false);
+
   const showInvalidIdError = () => {
     setIsInvalid(true);
     setTimeout(() => {setIsInvalid(false)}, 5000)
@@ -55,6 +60,7 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         (err) => {
           setPointVoucherData(null);
           showPostFailedError();
+          console.log(err);
         }
       );
     }
@@ -68,7 +74,9 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
 
   return (
     <main className={styles.main}>
-      <div>ID Token: {API.lineIdToken}</div>
+      <Head>
+        <title>QR Code Reader</title>
+      </Head>
       <Collapse in={done}><Alert severity="success">ポイントを受け取りました！</Alert></Collapse> 
       <Collapse in={isInvalid}><Alert severity="error">ID が無効です</Alert></Collapse> 
       <Collapse in={postFailed}><Alert severity="error">ポイントの受け取りに失敗しました</Alert></Collapse>
@@ -80,4 +88,4 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
   );
 };
 
-export default Home;
+export default QrCodeReader;

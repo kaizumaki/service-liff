@@ -5,18 +5,22 @@ import styles from "../styles/Home.module.css";
 import { Button } from "@mui/material";
 import API from "@/src/api";
 import { Alert, Collapse } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { useRouter } from "next/router";
+import { User } from "@/types/User";
 
-const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
+const Home: NextPage<{ liff: Liff | null; liffError: string | null, myInfo: User | null, setMyInfo: React.Dispatch<React.SetStateAction<User | null>>}> = ({
   liff,
-  liffError
+  liffError,
+  myInfo, setMyInfo
 }) => {
   const [error, setError] = useState(false);
+  const router = useRouter();
   const onClick = () => {
     API.register().then((res) => {
       if (res.status === 200) {
         API.getMyInfo().then((res) => {
-          API.setMyInfo(res);
+          setMyInfo(res);
         })
       } else {
         setError(true);
@@ -25,6 +29,11 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
       setError(true);
     })
   }
+  useEffect(() => {
+    if (myInfo) {
+      router.push("/qrcodereader");
+    }
+  }, [myInfo]);
   return (
     <main className={styles.main}>
       <Head>
