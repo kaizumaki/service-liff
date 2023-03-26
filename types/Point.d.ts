@@ -4,6 +4,6 @@ export interface Point   {
     id: string
     amount: number
     used_at: number | null
-    pointvoucher_id: string
-    pointvoucher: Voucher
+    pointVoucher_id: string
+    pointVoucher: Voucher
 }

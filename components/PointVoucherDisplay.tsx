@@ -1,4 +1,3 @@
-import type { Liff } from "@line/liff";
 import React from 'react'
 import { Voucher } from "@/types/Voucher";
 import {Dialog, Card, CardMedia, CardHeader, CardActions, Button, CardContent, Typography} from "@mui/material";

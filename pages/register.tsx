@@ -33,7 +33,7 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null, myInfo: User
     if (myInfo) {
       router.push("/qrcodereader");
     }
-  }, [myInfo]);
+  });
   return (
     <main className={styles.main}>
       <Head>
