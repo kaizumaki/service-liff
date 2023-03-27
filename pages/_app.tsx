@@ -6,6 +6,8 @@ import API from "@/src/api";
 import { User } from "@/types/User";
 import { UserInfoContext } from "@/src/userInfoContext";
 import { useRouter } from "next/router";
+import { TransitionGroup } from "react-transition-group";
+import { Alert, Collapse } from "@mui/material";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [liffObject, setLiffObject] = useState<Liff | null>(null);
@@ -20,6 +22,24 @@ function MyApp({ Component, pageProps }: AppProps) {
     myInfo,
     setMyInfo,
   };
+  const [errorMessages, setErrorMessages] = useState<Map<string, string>>(new Map<string, string>());
+  const deleteErrorMessage = (messageId: string) => {
+    const newErrorMessages = new Map<string, string>(errorMessages);
+    if (!newErrorMessages.has(messageId)) {
+      return;
+    }
+    newErrorMessages.delete(messageId);
+    setErrorMessages(newErrorMessages);
+  }
+  const addErrorMessage = (message: string) => {
+    const messageId = Math.random().toString(36).slice(-8);
+    const newErrorMessages = new Map<string, string>(errorMessages);
+    newErrorMessages.set(messageId, message);
+    setErrorMessages(newErrorMessages);
+    setTimeout(() => {
+      deleteErrorMessage(messageId)
+    }, 5000)
+  }
   useEffect(() => {
     import("@line/liff")
       .then((liff) => liff.default)
@@ -37,17 +57,27 @@ function MyApp({ Component, pageProps }: AppProps) {
               API.getMyInfo().then((res) => {
                 setMyInfo(res);
               }).catch((err) => {
-                setMyInfo(null);
-                router.push("/register")
+                API.register().then((res) => {
+                  if (res.status === 200) {
+                    API.getMyInfo().then((res) => {
+                      setMyInfo(res);
+                    })
+                  } else {
+                    addErrorMessage("ユーザー登録に失敗しました");
+                  }
+                }).catch((err) => {
+                  addErrorMessage("ユーザー登録に失敗しました");
+                })
               })
             }
           })
           .catch((error: Error) => {
             console.log("LIFF init failed.");
             setLiffError(error.toString());
+            addErrorMessage(error.toString());
           });
       });
-  }, []);
+  }, [liffObject, myInfo]);
 
   // Provide `liff` object and `liffError` object
   // to page component as property
@@ -57,6 +87,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   pageProps.setMyInfo = setMyInfo;
   return (
     <UserInfoContext.Provider value={value}>
+      <TransitionGroup>
+        {Array.from(errorMessages.entries()).map(([messageId, message]) => (
+          <Collapse key={messageId}>
+            <Alert severity="error" onClose={() => { deleteErrorMessage(messageId) }}>{message}</Alert>
+          </Collapse>))}
+      </TransitionGroup>
       <Component {...pageProps} />
     </UserInfoContext.Provider>
   );

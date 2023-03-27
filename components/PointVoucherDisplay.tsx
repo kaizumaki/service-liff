@@ -1,6 +1,7 @@
 import React from 'react'
 import { Voucher } from "@/types/Voucher";
 import {Dialog, Card, CardMedia, CardHeader, CardActions, Button, CardContent, Typography} from "@mui/material";
+import dayjs from 'dayjs';
 
 interface Prop {
   data: Voucher;
@@ -14,7 +15,7 @@ const PointVoucherDisplay = (props: Prop) => {
   return (
     <Dialog open={props.open}>
       <Card>
-        <CardHeader title={data.event_name} subheader={`${new Date(+data.event_date)}`} />
+        <CardHeader title={data.event_name} subheader={`${dayjs(new Date(+data.event_date * 1000)).format("YYYY年MM月DD日 HH:mm:ss")}`} />
         {data.event_image && <CardMedia component="img" height={140} alt="イベント画像" sx={{ objectFit: "contain" }} image={data.event_image} />}
         <CardContent>
           <Typography variant="body2" color="text.secondary">

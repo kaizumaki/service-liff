@@ -6,10 +6,11 @@ import { useEffect, useContext, useState } from "react";
 import { Point } from "@/types/Point";
 import API from "@/src/api";
 import { UserInfoContext } from "@/src/userInfoContext";
-import { Checkbox, Container, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Button } from "@mui/material";
+import { Checkbox, Container, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Button, Box } from "@mui/material";
 import { OnetimeNonce } from "@/types/OnetimeNonce";
 import OnetimeNonceDisplay from "@/components/OnetimeNonceQrCodeDisplay";
-
+import Image from "next/image";
+import dayjs from "dayjs";
 
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     liff,
@@ -62,8 +63,9 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     return (
       <main className={styles.main}>
         <Head>
-          <title>My Points</title>
+          <title>保有ポイント</title>
         </Head>
+        <Image src="/logo.png" alt="もりポ ロゴ" height={111} width={252} />
         <Container>
           {
             myPoints == null ? <CircularProgress /> : 
@@ -78,13 +80,13 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
                       <ListItemAvatar>
                         <Checkbox onChange={onChecked} value={point.id} />
                       </ListItemAvatar>
-                      <ListItemText primary={`${point.pointVoucher.point_amount} ポイント - ${point.pointVoucher.event_name}`} secondary={"" + new Date(point.pointVoucher.event_date)} />
+                      <ListItemText primary={`${point.pointVoucher.point_amount} もりポ - ${point.pointVoucher.event_name}`} secondary={dayjs(new Date(point.pointVoucher.event_date * 1000)).format("YYYY年MM月DD日 HH:mm:ss")} />
                     </ListItem>
                   }
                 )
               }
               </List>
-              <Button variant="contained" disabled={totalPoint===0} onClick={onUsePoints}>ポイントを使う ({totalPoint} ポイント)</Button></>
+              <Button variant="contained" disabled={totalPoint===0} onClick={onUsePoints}>もりポを使う ({totalPoint} もりポ)</Button></>
           }
         </Container>
         {onetimeNonce && <OnetimeNonceDisplay totalPoint={totalPoint} onetimeNonce={onetimeNonce} onCancel={onCancel} open={onetimeNonce!==null} />}

@@ -1,15 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Liff } from "@line/liff";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
-import QrCodeReaderButton from "@/components/QrCodeReaderButton";
 import PointVoucherDisplay from "@/components/PointVoucherDisplay";
 import API from "@/src/api";
 import { Voucher } from "@/types/Voucher";
-import { TextField, CircularProgress, Alert, Collapse } from "@mui/material"
-import { useContext } from "react";
-import { UserInfoContext } from "@/src/userInfoContext";
+import { CircularProgress, Alert, Collapse } from "@mui/material"
 
 
 
@@ -26,11 +23,11 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
 
   const showInvalidIdError = () => {
     setIsInvalid(true);
-    setTimeout(() => {setIsInvalid(false)}, 5000)
+    setTimeout(() => {setIsInvalid(false), liff?.closeWindow()}, 5000)
   }
   const showPostFailedError = () => {
     setPostFailed(true);
-    setTimeout(() => {setPostFailed(false)}, 5000)
+    setTimeout(() => {setPostFailed(false), liff?.closeWindow()}, 5000)
   }
   const onGetIdCallback = (value: string | null) => {
     setIdValue(value || "");
@@ -71,7 +68,22 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
   const onDone = () => {
     setTimeout(() => {liff?.closeWindow()}, 2000)
   }
-
+  useEffect(() => {
+    if (liff) {
+      liff.ready.then(() => {
+        try {
+          liff.scanCodeV2().then((value) => {
+            onGetIdCallback(value.value)
+          }).catch((err) => {
+            showInvalidIdError();
+          })
+        } catch {
+          showPostFailedError();
+        }
+      })
+    }
+  }, [liff])
+  
   return (
     <main className={styles.main}>
       <Head>
@@ -80,8 +92,6 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
       <Collapse in={done}><Alert severity="success">ポイントを受け取りました！</Alert></Collapse> 
       <Collapse in={isInvalid}><Alert severity="error">ID が無効です</Alert></Collapse> 
       <Collapse in={postFailed}><Alert severity="error">ポイントの受け取りに失敗しました</Alert></Collapse>
-      {liff && <QrCodeReaderButton liff={liff} callback={onGetIdCallback} />}
-      <TextField label="直接 ID を入力する" value={idValue} onChange={(e) => onGetIdCallback(e.target.value)} />
       {isLoading && <CircularProgress />}
       {pointVoucherData && <PointVoucherDisplay open={!!pointVoucherData} data={pointVoucherData} onConfirm={onConfirm} onCancel={onCancel} />}
     </main>
