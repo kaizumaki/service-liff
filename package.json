@@ -25,9 +25,10 @@
     "react-dom": "18.2.0",
     "react-qr-code": "^2.0.11",
     "react-transition-group": "^4.4.5",
+    "swr": "^2.1.2",
     "typescript": "4.9.5"
   },
   "devDependencies": {
-    "netlify-cli": "^13.2.1"
+    "vercel": "^28.18.3"
   }
 }

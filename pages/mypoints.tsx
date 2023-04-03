@@ -6,11 +6,12 @@ import { useEffect, useContext, useState } from "react";
 import { Point } from "@/types/Point";
 import API from "@/src/api";
 import { UserInfoContext } from "@/src/userInfoContext";
-import { Checkbox, Container, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Button, Box } from "@mui/material";
+import { Checkbox, Container, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Button, Collapse, Alert } from "@mui/material";
 import { OnetimeNonce } from "@/types/OnetimeNonce";
 import OnetimeNonceDisplay from "@/components/OnetimeNonceQrCodeDisplay";
 import Image from "next/image";
 import dayjs from "dayjs";
+import useSWR from 'swr';
 
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     liff,
@@ -21,6 +22,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     const { myInfo } = useContext(UserInfoContext);
     const [ totalPoint, setTotalPoint ] = useState<number>(0);
     const [ onetimeNonce, setOnetimeNonce ] = useState<OnetimeNonce | null>(null);
+    const [ pointUsed, setPointUsed ] = useState(false);
     const onChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.checked) {
         const newSet = new Set<string>(checkedIds);
@@ -32,13 +34,44 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         setCheckedIds(newSet);
       }
     }
-    useEffect(() => {
-      API.getPoints().then((res) => {
-        setMyPoints(new Map<string, Point>(res.filter((point) => point.used_at === null).map((point) => [point.id, point])))
-      }).catch((err) => {
-        console.log(err);
-      })
-    }, [myInfo]);
+
+    const renewMyPoints = (res: Point[]) => {
+      setMyPoints(
+        new Map<string, Point>(
+          res.filter((point) => point.used_at === null).map((point) => [point.id, point])
+        )
+      )
+    }
+    const onPointUsed = () => {
+      setOnetimeNonce(null);
+      setPointUsed(true);
+      setTimeout(() => liff?.closeWindow(), 3000);
+    }
+    useSWR("points", API.getPoints, {
+      refreshInterval: myInfo?2000:0,
+      onSuccess: (res) => {
+        if (myPoints === null) {
+          renewMyPoints(res);
+          return
+        }
+        const resMap = new Map<string, Point>(res.map((point) => [point.id, point]));
+        if (onetimeNonce !== null) {
+          var isUsed = false;
+          checkedIds.forEach((id) => {
+            if (resMap.has(id) && resMap.get(id)?.used_at !== null) {
+              isUsed = true;
+            }
+          })
+          if (isUsed) {
+            onPointUsed();
+          }
+        }
+        if (myPoints.size !== res.reduce((acc, point) => acc + (point.used_at === null ? 1 : 0), 0)) {
+          renewMyPoints(res);
+        }
+      }
+    });
+
     useEffect(() => {
       let totalPoint = 0;
       checkedIds.forEach((id) => {
@@ -65,6 +98,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         <Head>
           <title>保有ポイント</title>
         </Head>
+        <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
         <Image src="/logo.png" alt="もりポ ロゴ" height={111} width={252} />
         <Container>
           {
