@@ -12,6 +12,11 @@ interface Prop {
 
 const PointVoucherDisplay = (props: Prop) => {
   const { data, onConfirm, onCancel } = props;
+  const [ confirmed, setConfirmed ] = React.useState(false)
+  const onClick = () => {
+    setConfirmed(true)
+    onConfirm()
+  }
   return (
     <Dialog open={props.open}>
       <Card>
@@ -23,7 +28,7 @@ const PointVoucherDisplay = (props: Prop) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button variant="contained" onClick={onConfirm}>このポイントを受け取る</Button>
+          <Button variant="contained" disabled={confirmed} onClick={onClick}>このポイントを受け取る</Button>
           <Button variant="outlined" onClick={onCancel}>キャンセル</Button>
         </CardActions>
       </Card>
