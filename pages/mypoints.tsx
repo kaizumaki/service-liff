@@ -120,7 +120,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
                 )
               }
               </List>
-              <Button variant="contained" disabled={totalPoint===0} onClick={onUsePoints}>もりポを使う ({totalPoint} もりポ)</Button></>
+              <Button variant="contained" disabled={totalPoint===0} onClick={onUsePoints}>QR を表示する ({totalPoint} もりポ)</Button></>
           }
         </Container>
         {onetimeNonce && <OnetimeNonceDisplay totalPoint={totalPoint} onetimeNonce={onetimeNonce} onCancel={onCancel} open={onetimeNonce!==null} />}
