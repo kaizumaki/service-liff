@@ -6,12 +6,12 @@ import { useEffect, useContext, useState } from "react";
 import { Point } from "@/types/Point";
 import API from "@/src/api";
 import { UserInfoContext } from "@/src/userInfoContext";
-import { Checkbox, Container, List, ListItem, ListItemAvatar, ListItemText, CircularProgress, Button, Collapse, Alert } from "@mui/material";
+import { Container, List, CircularProgress, Button, Collapse, Alert } from "@mui/material";
 import { OnetimeNonce } from "@/types/OnetimeNonce";
 import OnetimeNonceDisplay from "@/components/OnetimeNonceQrCodeDisplay";
 import Image from "next/image";
-import dayjs from "dayjs";
 import useSWR from 'swr';
+import PointTicketDisplay from "@/components/PointTicketDisplay";
 
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     liff,
@@ -23,14 +23,14 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     const [ totalPoint, setTotalPoint ] = useState<number>(0);
     const [ onetimeNonce, setOnetimeNonce ] = useState<OnetimeNonce | null>(null);
     const [ pointUsed, setPointUsed ] = useState(false);
-    const onChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.checked) {
+    const onChecked = (checked: boolean, tickedId: string) => {
+      if (checked) {
         const newSet = new Set<string>(checkedIds);
-        newSet.add(event.target.value)
+        newSet.add(tickedId)
         setCheckedIds(newSet);
       } else {
         const newSet = new Set<string>(checkedIds);
-        newSet.delete(event.target.value)
+        newSet.delete(tickedId)
         setCheckedIds(newSet);
       }
     }
@@ -38,7 +38,9 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     const renewMyPoints = (res: Point[]) => {
       setMyPoints(
         new Map<string, Point>(
-          res.filter((point) => point.used_at === null).map((point) => [point.id, point])
+          res.sort(
+            (a: Point, b: Point) => a.pointVoucher.event_date < b.pointVoucher.event_date ? 1 : -1
+          ).filter((point) => point.used_at === null).map((point) => [point.id, point])
         )
       )
     }
@@ -108,14 +110,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
               {
                 Array.from(myPoints.values()).map(
                   (point) => {
-                    return <ListItem
-                      key={point.id}
-                    >
-                      <ListItemAvatar>
-                        <Checkbox onChange={onChecked} value={point.id} />
-                      </ListItemAvatar>
-                      <ListItemText primary={`${point.pointVoucher.point_amount} もりポ - ${point.pointVoucher.event_name}`} secondary={dayjs(new Date(point.pointVoucher.event_date * 1000)).format("YYYY年MM月DD日 HH:mm:ss")} />
-                    </ListItem>
+                    return <PointTicketDisplay key={point.id} ticket={point} onClick={onChecked} />
                   }
                 )
               }
