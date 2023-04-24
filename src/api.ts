@@ -78,7 +78,9 @@ class APIHandlerClass {
           "line-id-token": `${this.lineIdToken}`
         }
       }
-    ).then((res: Response) => res.json())
+    ).then(
+      (res: Response) => res.json()
+    )
   }
 
   createPointOnetimeNonce: (ids: string[]) => Promise<OnetimeNonce> = (ids: string[]) => {
