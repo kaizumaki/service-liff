@@ -40,7 +40,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         new Map<string, Point>(
           res.sort(
             (a: Point, b: Point) => a.pointVoucher.event_date < b.pointVoucher.event_date ? 1 : -1
-          ).filter((point) => point.used_at === null).map((point) => [point.id, point])
+          ).map((point) => [point.id, point])
         )
       )
     }
