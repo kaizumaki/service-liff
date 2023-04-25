@@ -7,7 +7,8 @@ import { User } from "@/types/User";
 import { UserInfoContext } from "@/src/userInfoContext";
 import { useRouter } from "next/router";
 import { TransitionGroup } from "react-transition-group";
-import { Alert, Collapse } from "@mui/material";
+import { Alert, Collapse, ThemeProvider } from "@mui/material";
+import theme from "@/styles/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [liffObject, setLiffObject] = useState<Liff | null>(null);
@@ -86,6 +87,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   pageProps.myInfo = myInfo;
   pageProps.setMyInfo = setMyInfo;
   return (
+    <ThemeProvider theme={theme}>
     <UserInfoContext.Provider value={value}>
       <TransitionGroup>
         {Array.from(errorMessages.entries()).map(([messageId, message]) => (
@@ -95,6 +97,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </TransitionGroup>
       <Component {...pageProps} />
     </UserInfoContext.Provider>
+    </ThemeProvider>
   );
 }
 
