@@ -14,7 +14,6 @@ import useSWR from 'swr';
 import PointTicketDisplay from "@/components/PointTicketDisplay";
 import Footer from "@/components/Footer"
 
-
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     liff,
     liffError
