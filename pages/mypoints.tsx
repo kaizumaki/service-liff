@@ -12,6 +12,7 @@ import OnetimeNonceDisplay from "@/components/OnetimeNonceQrCodeDisplay";
 import Image from "next/image";
 import useSWR from 'swr';
 import PointTicketDisplay from "@/components/PointTicketDisplay";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer"
 
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
@@ -102,19 +103,19 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
           <title>保有ポイント</title>
         </Head>
         <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
-        <Image src="/logo.png" alt="もりポ ロゴ" height={111} width={252} />
+        <Header />
         <Container>
           {
             myPoints == null ? <CircularProgress /> : 
-              myPoints.size == 0 ? <p>ポイントはありません</p> : <>
-              <List sx={{mb: 10}}>
+            myPoints.size == 0 ? <p>ポイントはありません</p> : <>
+              <List sx={{mb: 10, mt: 2}}>
               {
                 Array.from(myPoints.values()).map(
                   (point) => {
                     return <PointTicketDisplay key={point.id} ticket={point} onClick={onChecked} />
                   }
-                )
-              }
+                  )
+                }
               </List>
               <Footer isSelected={checkedIds.size !== 0} totalPoint={totalPoint} onClick={onUsePoints} />
             </>
