@@ -1,6 +1,6 @@
 import React from "react";
 import { Point } from "@/types/Point";
-import { Button, ListItem, ListItemAvatar, ListItemText, Checkbox } from "@mui/material";
+import { Button, ListItem, ListItemText, Checkbox } from "@mui/material";
 import dayjs from "dayjs";
 
 
@@ -28,7 +28,14 @@ const PointTicketDisplay = ({ ticket, onClick }: Props) => {
           <Checkbox
             checked={checked}
             disabled={!valid}
-            sx={{ '& .MuiSvgIcon-root': { fontSize: 45, backgroundColor: "white", borderRadius: "10%" }}}
+            sx={
+              {
+                '& .MuiSvgIcon-root': {
+                  fontSize: 36,
+                  color: "white",
+                }
+              }
+            }
           />
         }
       >
