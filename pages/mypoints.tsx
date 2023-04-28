@@ -104,11 +104,11 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         </Head>
         <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
         <Header />
-        <Container sx={{mt: "10px"}}>
+        <Container>
           {
             myPoints == null ? <CircularProgress /> : 
             myPoints.size == 0 ? <p>ポイントはありません</p> : <>
-              <List sx={{mb: 10}}>
+              <List sx={{mb: 10, mt: 2}}>
               {
                 Array.from(myPoints.values()).map(
                   (point) => {
