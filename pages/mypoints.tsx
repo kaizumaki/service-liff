@@ -70,7 +70,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
             onPointUsed();
           }
         }
-        if (myPoints.size !== res.reduce((acc, point) => acc + (point.used_at === null ? 1 : 0), 0)) {
+        if (Array.from(myPoints.values()).reduce((acc, point) => acc + (point.used_at === null ? 1 : 0), 0) !== res.reduce((acc, point) => acc + (point.used_at === null ? 1 : 0), 0)) {
           renewMyPoints(res);
         }
       }
@@ -102,9 +102,9 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         <Head>
           <title>保有ポイント</title>
         </Head>
-        <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
         <Header />
         <Container sx={{mt: "10px"}}>
+          <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
           {
             myPoints == null ? <CircularProgress /> : 
             myPoints.size == 0 ? <p>ポイントはありません</p> : <>
