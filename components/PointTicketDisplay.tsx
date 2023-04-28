@@ -35,6 +35,7 @@ const PointTicketDisplay = ({ ticket, onClick }: Props) => {
         <ListItemText
           primary={`${ticket.pointVoucher.point_amount} もりポ - ${ticket.pointVoucher.event_name}`}
           secondary={dayjs(new Date(ticket.pointVoucher.event_date * 1000)).format("YYYY年MM月DD日 HH:mm:ss")}
+          secondaryTypographyProps={{color: "primaryContentText"}}
         />
       </Button>
     </ListItem>
