@@ -1,6 +1,7 @@
 import React from 'react'
 import { OnetimeNonce } from "@/types/OnetimeNonce";
-import {Dialog, Card, CardMedia, CardHeader, CardActions, Button, CardContent, Typography} from "@mui/material";
+import {Dialog, Card, CardHeader, CardActions, Button, CardContent, Box} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import QRCode from "react-qr-code";
 import dayjs from 'dayjs';
 
@@ -27,7 +28,10 @@ const OnetimeNonceDisplay = (props: Prop) => {
           />
         </CardContent>
         <CardActions>
-          <Button variant="outlined" onClick={onCancel}>キャンセル</Button>
+          <Box sx={{ flexGrow: 1 }} />
+          <Button onClick={onCancel} endIcon={
+            <CloseIcon />
+          }>キャンセル</Button>
         </CardActions>
       </Card>
     </Dialog>
