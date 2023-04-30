@@ -2,7 +2,6 @@ import React from 'react'
 import { OnetimeNonce } from "@/types/OnetimeNonce";
 import {Dialog, Card, CardHeader, CardActions, Button, CardContent, Box} from "@mui/material";
 import QRCode from "react-qr-code";
-import dayjs from 'dayjs';
 
 
 interface Prop {
@@ -17,7 +16,7 @@ const OnetimeNonceDisplay = (props: Prop) => {
   return (
     <Dialog open={open}>
       <Card>
-        <CardHeader title={`${totalPoint} もりポ`} subheader={`有効期限: ${dayjs(new Date(+onetimeNonce.expired_at * 1000)).format("YYYY年MM月DD日 HH:mm:ss")}`} />
+        <CardHeader title={`${totalPoint} もりポ`} />
         <CardContent>
           <QRCode
             size={256}
