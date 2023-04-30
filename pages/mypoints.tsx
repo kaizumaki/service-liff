@@ -106,6 +106,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
           mt: "10px",
           backgroundImage: "url(/bg.png)",
           backgroundSize: "cover",
+          minHeight: "100vh",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}>
