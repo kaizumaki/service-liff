@@ -32,8 +32,8 @@ const PointTicketDisplay = ({ ticket, onClick }: Props) => {
               {
                 '& .MuiSvgIcon-root': {
                   fontSize: 36,
-                  color: "white",
-                }
+                  color: valid?"white":"disabled",
+                },
               }
             }
           />
@@ -41,6 +41,7 @@ const PointTicketDisplay = ({ ticket, onClick }: Props) => {
       >
         <ListItemText
           primary={`${ticket.pointVoucher.point_amount} もりポ - ${ticket.pointVoucher.event_name}`}
+          primaryTypographyProps={{variant: "body1", noWrap: true}}
           secondary={`有効期限: ${dayjs(new Date(ticket.pointVoucher.expired_at * 1000)).format("YYYY年MM月DD日 HH:mm:ss")}`}
           secondaryTypographyProps={{color: "primaryContentText", noWrap: true, variant: "caption"}}
         />
