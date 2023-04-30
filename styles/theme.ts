@@ -6,6 +6,9 @@ const theme = createTheme({
       main: '#176043',
       contrastText: '#fff',
     },
+    action: {
+      disabled: "rgba(255, 255, 255, 0.4)"
+    }
   },
 });
 
