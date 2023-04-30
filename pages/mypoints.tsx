@@ -9,7 +9,6 @@ import { UserInfoContext } from "@/src/userInfoContext";
 import { Container, List, CircularProgress, Button, Collapse, Alert } from "@mui/material";
 import { OnetimeNonce } from "@/types/OnetimeNonce";
 import OnetimeNonceDisplay from "@/components/OnetimeNonceQrCodeDisplay";
-import Image from "next/image";
 import useSWR from 'swr';
 import PointTicketDisplay from "@/components/PointTicketDisplay";
 import Header from "@/components/Header";
@@ -103,12 +102,18 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
           <title>保有ポイント</title>
         </Head>
         <Header />
-        <Container sx={{mt: "10px"}}>
+        <Container sx={{
+          mt: "10px",
+          backgroundImage: "url(/bg.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}>
           <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
           {
             myPoints == null ? <CircularProgress /> : 
             myPoints.size == 0 ? <p>ポイントはありません</p> : <>
-              <List sx={{mb: 10}}>
+              <List sx={{pb: 10}}>
               {
                 Array.from(myPoints.values()).map(
                   (point) => {
