@@ -6,13 +6,14 @@ import { useEffect, useContext, useState } from "react";
 import { Point } from "@/types/Point";
 import API from "@/src/api";
 import { UserInfoContext } from "@/src/userInfoContext";
-import { Container, List, CircularProgress, Button, Collapse, Alert } from "@mui/material";
+import { Container, List, CircularProgress } from "@mui/material";
 import { OnetimeNonce } from "@/types/OnetimeNonce";
 import OnetimeNonceDisplay from "@/components/OnetimeNonceQrCodeDisplay";
 import useSWR from 'swr';
 import PointTicketDisplay from "@/components/PointTicketDisplay";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer"
+import { enqueueSnackbar } from "notistack";
 
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     liff,
@@ -23,7 +24,6 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     const { myInfo } = useContext(UserInfoContext);
     const [ totalPoint, setTotalPoint ] = useState<number>(0);
     const [ onetimeNonce, setOnetimeNonce ] = useState<OnetimeNonce | null>(null);
-    const [ pointUsed, setPointUsed ] = useState(false);
     const onChecked = (checked: boolean, tickedId: string) => {
       if (checked) {
         const newSet = new Set<string>(checkedIds);
@@ -47,7 +47,7 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     }
     const onPointUsed = () => {
       setOnetimeNonce(null);
-      setPointUsed(true);
+      enqueueSnackbar("ポイントを使用しました", { variant: "success" });
       setTimeout(() => liff?.closeWindow(), 3000);
     }
     useSWR("points", API.getPoints, {
@@ -110,7 +110,6 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}>
-          <Collapse in={pointUsed}><Alert severity="success">ポイントを利用しました！</Alert></Collapse> 
           {
             myPoints == null ? <CircularProgress /> : 
             myPoints.size == 0 ? <p>ポイントはありません</p> : <>

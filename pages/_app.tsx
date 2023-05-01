@@ -6,8 +6,8 @@ import API from "@/src/api";
 import { User } from "@/types/User";
 import { UserInfoContext } from "@/src/userInfoContext";
 import { useRouter } from "next/router";
-import { TransitionGroup } from "react-transition-group";
-import { Alert, Collapse, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import theme from "@/styles/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -23,24 +23,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     myInfo,
     setMyInfo,
   };
-  const [errorMessages, setErrorMessages] = useState<Map<string, string>>(new Map<string, string>());
-  const deleteErrorMessage = (messageId: string) => {
-    const newErrorMessages = new Map<string, string>(errorMessages);
-    if (!newErrorMessages.has(messageId)) {
-      return;
-    }
-    newErrorMessages.delete(messageId);
-    setErrorMessages(newErrorMessages);
-  }
-  const addErrorMessage = (message: string) => {
-    const messageId = Math.random().toString(36).slice(-8);
-    const newErrorMessages = new Map<string, string>(errorMessages);
-    newErrorMessages.set(messageId, message);
-    setErrorMessages(newErrorMessages);
-    setTimeout(() => {
-      deleteErrorMessage(messageId)
-    }, 5000)
-  }
   useEffect(() => {
     import("@line/liff")
       .then((liff) => liff.default)
@@ -64,10 +46,10 @@ function MyApp({ Component, pageProps }: AppProps) {
                       setMyInfo(res);
                     })
                   } else {
-                    addErrorMessage("ユーザー登録に失敗しました");
+                    enqueueSnackbar("ユーザー登録に失敗しました", { variant: "error" });
                   }
                 }).catch((err) => {
-                  addErrorMessage("ユーザー登録に失敗しました");
+                  enqueueSnackbar("ユーザー登録に失敗しました", { variant: "error" });
                 })
               })
             }
@@ -75,7 +57,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           .catch((error: Error) => {
             console.log("LIFF init failed.");
             setLiffError(error.toString());
-            addErrorMessage(error.toString());
+            enqueueSnackbar(error.toString(), { variant: "error" });
           });
       });
   }, [liffObject, myInfo]);
@@ -89,12 +71,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
     <UserInfoContext.Provider value={value}>
-      <TransitionGroup>
-        {Array.from(errorMessages.entries()).map(([messageId, message]) => (
-          <Collapse key={messageId}>
-            <Alert severity="error" onClose={() => { deleteErrorMessage(messageId) }}>{message}</Alert>
-          </Collapse>))}
-      </TransitionGroup>
+      <SnackbarProvider dense anchorOrigin={{horizontal: "center", vertical: "top"}} preventDuplicate={true} />
       <Component {...pageProps} />
     </UserInfoContext.Provider>
     </ThemeProvider>

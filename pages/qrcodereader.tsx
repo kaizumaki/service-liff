@@ -7,6 +7,7 @@ import PointVoucherDisplay from "@/components/PointVoucherDisplay";
 import API from "@/src/api";
 import { Voucher } from "@/types/Voucher";
 import { CircularProgress, Alert, Collapse } from "@mui/material"
+import { enqueueSnackbar } from "notistack";
 
 
 
@@ -17,23 +18,19 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
   const [pointVoucherData, setPointVoucherData] = useState<Voucher | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [idValue, setIdValue] = useState("");
-  const [isInvalid, setIsInvalid] = useState(false);
-  const [postFailed, setPostFailed] = useState(false);
-  const [done, setDone] = useState(false);
 
   const showInvalidIdError = () => {
-    setIsInvalid(true);
-    setTimeout(() => {setIsInvalid(false), liff?.closeWindow()}, 5000)
+    enqueueSnackbar("無効なQRコードです", { variant: "error" })
+    setTimeout(() => {liff?.closeWindow()}, 5000)
   }
   const showPostFailedError = () => {
-    setPostFailed(true);
-    setTimeout(() => {setPostFailed(false), liff?.closeWindow()}, 5000)
+    enqueueSnackbar("ポイントの受け取りに失敗しました", { variant: "error" })
+    setTimeout(() => {liff?.closeWindow()}, 5000)
   }
   const onGetIdCallback = (value: string | null) => {
     setIdValue(value || "");
     setIsLoading(true);
     if (value) {
-      setIsInvalid(false);
       API.getVoucher(value).then((res) => {
         setPointVoucherData(res);
       }).catch(
@@ -51,7 +48,7 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
     if (pointVoucherData) {
       API.postVoucher(`${pointVoucherData.id}`).then((res) => {
         setPointVoucherData(null);
-        setDone(true);
+        enqueueSnackbar("ポイントを受け取りました！", { variant: "success" })
         onDone();
       }).catch(
         (err) => {
@@ -75,7 +72,6 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
           liff.scanCodeV2().then((value) => {
             onGetIdCallback(value.value)
           }).catch((err) => {
-            showInvalidIdError();
           })
         } catch {
           showPostFailedError();
@@ -89,9 +85,6 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
       <Head>
         <title>QR Code Reader</title>
       </Head>
-      <Collapse in={done}><Alert severity="success">ポイントを受け取りました！</Alert></Collapse> 
-      <Collapse in={isInvalid}><Alert severity="error">ID が無効です</Alert></Collapse> 
-      <Collapse in={postFailed}><Alert severity="error">ポイントの受け取りに失敗しました</Alert></Collapse>
       {isLoading && <CircularProgress />}
       {pointVoucherData && <PointVoucherDisplay open={!!pointVoucherData} data={pointVoucherData} onConfirm={onConfirm} onCancel={onCancel} />}
     </main>
