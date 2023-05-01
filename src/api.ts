@@ -43,7 +43,11 @@ class APIHandlerClass {
     return fetch(
       this.rootURL + `pointvoucher?id=${voucherId}`
     )
-      .then((res: Response) => res.json())
+      .then((res: Response) => {
+        if (res.status !== 200) return new Promise<Voucher>((resolve, reject) => reject(new Error(res.statusText)))
+        return res.json()
+      }
+    )
   }
   postVoucher: (voucherId: string) => Promise<string> = (voucherId: string) => {
     if (!this.lineIdToken) return new Promise<string>((resolve, reject) => reject(new Error("Line ID Token is not set")))
