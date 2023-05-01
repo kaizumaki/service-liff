@@ -11,6 +11,20 @@ const theme = createTheme({
       disabledBackground: "rgba(0, 0, 0, 0.4)",
     }
   },
+  components: {
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          width: '5rem',
+          height: '5rem',
+          '& svg': {
+            width: '3rem',
+            height: '3rem',
+          }
+        },
+      },
+    },
+  }
 });
 
 export default theme;
