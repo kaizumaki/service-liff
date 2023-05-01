@@ -6,7 +6,7 @@ import Head from "next/head";
 import PointVoucherDisplay from "@/components/PointVoucherDisplay";
 import API from "@/src/api";
 import { Voucher } from "@/types/Voucher";
-import { CircularProgress, Alert, Collapse } from "@mui/material"
+import { CircularProgress, TextField } from "@mui/material"
 import { enqueueSnackbar } from "notistack";
 
 
@@ -54,7 +54,6 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
         (err) => {
           setPointVoucherData(null);
           showPostFailedError();
-          console.log(err);
         }
       );
     }
@@ -85,6 +84,7 @@ const QrCodeReader: NextPage<{ liff: Liff | null; liffError: string | null }> = 
       <Head>
         <title>QR Code Reader</title>
       </Head>
+      {process.env.NEXT_PUBLIC_DEBUG_LINE_ID_TOKEN && <TextField label="ID" onChange={(event: React.ChangeEvent<HTMLInputElement>) => {onGetIdCallback(event.target.value);}} />}
       {isLoading && <CircularProgress />}
       {pointVoucherData && <PointVoucherDisplay open={!!pointVoucherData} data={pointVoucherData} onConfirm={onConfirm} onCancel={onCancel} />}
     </main>
