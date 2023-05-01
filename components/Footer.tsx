@@ -19,6 +19,7 @@ const Footer = (props: Props) => {
       background: "linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 192))",
       justifyContent: "right",
       display: "flex",
+      zIndex: "appBar"
     }} elevation={0}>
       <Box
         display="flex"
