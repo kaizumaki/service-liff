@@ -24,6 +24,8 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     const { myInfo } = useContext(UserInfoContext);
     const [ totalPoint, setTotalPoint ] = useState<number>(0);
     const [ onetimeNonce, setOnetimeNonce ] = useState<OnetimeNonce | null>(null);
+    const [ snackbarKey, setSnackbarKey ] = useState<SnackbarKey | null>(null);
+    const [ loadingTimeoutKey, setLoadingTimeoutKey ] = useState<NodeJS.Timeout | null>(null);
     const onChecked = (checked: boolean, tickedId: string) => {
       if (checked) {
         const newSet = new Set<string>(checkedIds);
@@ -50,9 +52,22 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
       enqueueSnackbar("ポイントを使用しました", { variant: "success" });
       setTimeout(() => liff?.closeWindow(), 3000);
     }
-    setTimeout(() => {
-      enqueueSnackbar("通信状況により、表示に時間がかかることがあります。そのままお待ちください...", { variant: "info" })
-    }, 1000)
+    useEffect(() => {
+      if (myPoints === null && loadingTimeoutKey === null && snackbarKey === null) {
+        setLoadingTimeoutKey(setTimeout(() => {
+          setSnackbarKey(enqueueSnackbar("通信状況により、表示に時間がかかることがあります。そのままお待ちください...", { variant: "info", persist: true }))
+        }, 3000))
+      } else if (myPoints !== null) {
+        if (loadingTimeoutKey !== null) {
+          clearTimeout(loadingTimeoutKey);
+          setLoadingTimeoutKey(null);
+        }
+        if (snackbarKey !== null) {
+          closeSnackbar(snackbarKey);
+          setSnackbarKey(null);
+        }
+      }
+    }, [myPoints, snackbarKey, loadingTimeoutKey])
     useSWR("points", API.getPoints, {
       refreshInterval: myInfo?2000:0,
       onSuccess: (res) => {
