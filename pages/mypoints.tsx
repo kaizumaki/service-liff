@@ -13,7 +13,7 @@ import useSWR from 'swr';
 import PointTicketDisplay from "@/components/PointTicketDisplay";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer"
-import { enqueueSnackbar } from "notistack";
+import { enqueueSnackbar, closeSnackbar, SnackbarKey } from "notistack";
 
 const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
     liff,
@@ -50,6 +50,9 @@ const MyPoints: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
       enqueueSnackbar("ポイントを使用しました", { variant: "success" });
       setTimeout(() => liff?.closeWindow(), 3000);
     }
+    setTimeout(() => {
+      enqueueSnackbar("通信状況により、表示に時間がかかることがあります。そのままお待ちください...", { variant: "info" })
+    }, 1000)
     useSWR("points", API.getPoints, {
       refreshInterval: myInfo?2000:0,
       onSuccess: (res) => {
