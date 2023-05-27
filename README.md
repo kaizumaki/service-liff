@@ -37,7 +37,23 @@ NEXT_PUBLIC_API_ROOT=(service-backend API のエンドポイント)
 NEXT_PUBLIC_DEBUG_LINE_ID_TOKEN=(デバグ用 LINE トークン)
 ```
 
-依存パッケージのインストール
+#### LIFF ID の取得方法
+
+参考 URL: https://developers.line.biz/ja/docs/liff/trying-liff-app/#get-and-set-liff-id
+
+#### service-backend API のエンドポイント
+
+ソースコード: https://github.com/mori-po/service-backend
+
+これを Cloud Functions などにデプロイする
+
+#### デバグ用 LINE トークン
+
+`liff.getIDToken()` で得られる値。LIFF アプリとして LINE の ID 認証が通り、`liff` オブジェクトが取得できている必要がある。
+この値を環境変数 `NEXT_PUBLIC_DEBUG_LINE_ID_TOKEN` に設定していると、開発用ローカルサーバで該当トークンのユーザとして認証ができる。
+トークンは 1 時間程度で有効期限が切れるため、都度更新する必要がある。
+
+### 依存パッケージのインストール
 
 ```
 yarn install --frozen-lockfile
